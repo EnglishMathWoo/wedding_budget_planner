@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: wedding-budget-planner-api
+  profiles:
+    default: local
+    active: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: false
+      connection-test-query: SELECT 1
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      naming:
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    open-in-view: false
+    show-sql: true
+  data:
+    redis:
+      port: 6379
+  security:
+    filter:
+      dispatcher-types: request, error
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      location: ./temp
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    operations-sorter: method
+    disable-swagger-default-url: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: "jdbc:mysql://127.0.0.1:3306/crazywedding?autoReconnect=true&useUnicode=true&serverTimezone=Asia/Seoul&rewriteBatchedStatements=true"
+    username: root
+    password: 1234
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+      pool-name: pool-local-wedding-budget-planner-api
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+  data:
+    redis:
+      url: "localhost"
+server:
+  port: 80
+authentication:
+  issuer: local-wedding-budget-planner-api
+  admin:
+    access-token:
+      secret-key: WEDDING_BUDGET_PLANNER_ADMIN_ACCESS_KEY@#$
+      expired-seconds: 7200
+    refresh-token:
+      secret-key: WEDDING_BUDGET_PLANNER_ADMIN_REFRESH_KEY!@#
+      expired-seconds: 14400
+  user:
+    access-token:
+      secret-key: WEDDING_BUDGET_PLANNER_ADMIN_ACCESS_KEY@#$
+      expired-seconds: 7200
+    refresh-token:
+      secret-key: WEDDING_BUDGET_PLANNER_ADMIN_REFRESH_KEY!@#
+      expired-seconds: 14400
+security:
+  crypto:
+    aes:
+      secret-key: WEDDING_BUDGET_PLANNER_ADMIN_ACCESS_KEY@#$
