@@ -27,7 +27,6 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
       location: ./temp
-
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -36,6 +35,7 @@ springdoc:
     disable-swagger-default-url: true
 
 ---
+
 spring:
   config:
     activate:
@@ -78,3 +78,5 @@ security:
   crypto:
     aes:
       secret-key: WEDDING_BUDGET_PLANNER_ADMIN_ACCESS_KEY@#$
+logging:
+  config: classpath:development-log4j2.yml
