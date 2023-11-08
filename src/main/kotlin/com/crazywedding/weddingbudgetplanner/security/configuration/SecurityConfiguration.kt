@@ -1,13 +1,12 @@
 package com.crazywedding.weddingbudgetplanner.security.configuration
 
+import com.crazywedding.weddingbudgetplanner.security.filter.AuthenticationFilter
 import com.crazywedding.weddingbudgetplanner.security.filter.GlobalBaseExceptionFilter
-import com.crazywedding.weddingbudgetplanner.security.filter.UserAccessTokenFilter
-import com.crazywedding.weddingbudgetplanner.security.filter.UserRefreshTokenFilter
 import com.crazywedding.weddingbudgetplanner.security.handler.DelegatedAccessDeniedHandler
 import com.crazywedding.weddingbudgetplanner.security.handler.DelegatedAuthenticationEntryPoint
-import com.crazywedding.weddingbudgetplanner.security.principal.Authority
-import com.crazywedding.weddingbudgetplanner.security.token.UserAccessTokenProvider
-import com.crazywedding.weddingbudgetplanner.security.token.UserRefreshTokenProvider
+import com.crazywedding.weddingbudgetplanner.security.handler.JwtAuthenticateHandler
+import com.crazywedding.weddingbudgetplanner.security.authentication.Authority
+import com.crazywedding.weddingbudgetplanner.security.token.JwtProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -15,10 +14,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.util.matcher.RegexRequestMatcher
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.CorsUtils
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.servlet.HandlerExceptionResolver
 
 @Configuration
 @EnableWebSecurity
@@ -28,10 +29,11 @@ class SecurityConfiguration {
     @Throws(Exception::class)
     fun filterChain(
         http: HttpSecurity,
-        userAccessTokenProvider: UserAccessTokenProvider,
-        userRefreshTokenProvider: UserRefreshTokenProvider,
+        userJwtProvider: JwtProvider,
+        adminJwtProvider: JwtProvider,
         accessDeniedHandler: DelegatedAccessDeniedHandler,
         authenticationEntryPoint: DelegatedAuthenticationEntryPoint,
+        handlerExceptionResolver: HandlerExceptionResolver
     ): SecurityFilterChain {
         http.csrf { it.disable() }
             .httpBasic { it.disable() }
@@ -42,31 +44,31 @@ class SecurityConfiguration {
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                     .requestMatchers(
                         "/user-api/auth/**",
-                        "/user-api/oauth/**",
-                        "/admin-api/auth/**",
-                        "/admin-api/main/**"
+                        "/admin-api/auth/**"
                     ).permitAll()
                     .requestMatchers("/user-api/**").hasAnyRole(Authority.USER)
                     .requestMatchers("/admin-api/**").hasAnyRole(Authority.ADMIN)
                     .requestMatchers("/**").permitAll()
             }.addFilterBefore(
-                GlobalBaseExceptionFilter(),
+                AuthenticationFilter(
+                    RegexRequestMatcher("/user-api/(?!auth|oauth/).+", null),
+                    JwtAuthenticateHandler(userJwtProvider)
+                ),
                 UsernamePasswordAuthenticationFilter::class.java
-            )
-            .addFilterBefore(
-                UserAccessTokenFilter(userAccessTokenProvider),
+            ).addFilterBefore(
+                AuthenticationFilter(
+                    RegexRequestMatcher("/admin-api/(?!auth|main/).+", null),
+                    JwtAuthenticateHandler(adminJwtProvider)
+                ),
                 UsernamePasswordAuthenticationFilter::class.java
-            )
-            .addFilterBefore(
-                UserRefreshTokenFilter(userRefreshTokenProvider),
+            ).addFilterBefore(
+                GlobalBaseExceptionFilter(handlerExceptionResolver),
                 UsernamePasswordAuthenticationFilter::class.java
-            )
-            .exceptionHandling {
+            ).exceptionHandling {
                 it
                     .accessDeniedHandler(accessDeniedHandler)
                     .authenticationEntryPoint(authenticationEntryPoint)
             }
-
 
         return http.build()
     }
@@ -87,6 +89,7 @@ class SecurityConfiguration {
         corsConfig.addAllowedHeader("*") // 모든 header 요청 허용
         corsConfig.addAllowedMethod("*") // 모든 post,get,put,delete,patch 요청 허용
         configSource.registerCorsConfiguration("/**", corsConfig) // 모든 요청에 대해 corsConfig 적용
+
         return configSource
     }
 }
