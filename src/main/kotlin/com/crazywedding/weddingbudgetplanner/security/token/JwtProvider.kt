@@ -15,8 +15,8 @@ import javax.crypto.SecretKey
 
 class JwtProvider(
     private val iss: String,
-    private val accessTokenSecretKey: String,
     private val accessTokenExpTime: Long,
+    private val accessTokenSecretKey: String,
 ) : AuthTokenProvider<Jwt, Account> {
 
     private val secretKey: SecretKey =

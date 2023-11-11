@@ -14,8 +14,7 @@ import java.io.IOException
 class AuthenticationFilter(
     private val matcher: RequestMatcher,
     private val authenticateHandler: AuthenticateHandler
-) :
-    OncePerRequestFilter() {
+) : OncePerRequestFilter() {
 
     private fun attemptToAuthenticate(request: HttpServletRequest) {
         // if auth fail then return 'Anonymous Authentication'
