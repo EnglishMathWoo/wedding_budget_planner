@@ -10,8 +10,8 @@ import java.security.Principal
 
 class Account(
     val id: Long,
-    // Security Principal 에서는 getter override 가 강제화 되어있음
-    @JvmField val name: String,
+    @JvmField
+    val name: String,
     val authorId: Long,
     val authorities: List<GrantedAuthority>
 ) : Principal {
@@ -34,7 +34,7 @@ class Account(
         fun of(user: UserDto): Account {
             return Account(
                 id = user.id,
-                name = user.email,
+                name = user.username,
                 authorId = user.authorId,
                 authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Authority.ROLE_USER)
             )
@@ -52,7 +52,7 @@ class Account(
         fun of(user: User): Account {
             return Account(
                 id = user.id!!,
-                name = user.email,
+                name = user.username,
                 authorId = user.author?.id!!,
                 authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Authority.ROLE_USER)
             )
