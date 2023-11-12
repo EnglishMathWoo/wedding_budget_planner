@@ -27,14 +27,6 @@ class Admin(
     @Comment(value = "이메일")
     var email: String?,
 
-    @Column
-    @Comment(value = "내선번호")
-    var extensionNumber: String? = null,
-
-    @Column
-    @Comment(value = "내선번호 4자리")
-    var extensionNumberSuffix: String? = null,
-
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "admin")
     var author: Author? = null,
 

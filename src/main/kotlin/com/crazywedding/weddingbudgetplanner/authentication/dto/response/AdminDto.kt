@@ -20,10 +20,6 @@ data class AdminDto(
     val phone: String?,
     @Schema(requiredMode = REQUIRED, description = "이메일", nullable = true)
     val email: String?,
-    @Schema(requiredMode = REQUIRED, description = "내선번호", nullable = true)
-    val extensionNumber: String?,
-    @Schema(requiredMode = REQUIRED, description = "내선번호(4자리)", nullable = true)
-    val extensionNumberSuffix: String?,
     @Schema(requiredMode = REQUIRED, description = "생성일")
     val createdAt: LocalDateTime,
     @Schema(requiredMode = REQUIRED, description = "수정일")
@@ -40,8 +36,6 @@ data class AdminDto(
                 name = entity.name,
                 phone = entity.phone,
                 email = entity.email,
-                extensionNumber = entity.extensionNumber,
-                extensionNumberSuffix = entity.extensionNumberSuffix,
                 createdAt = entity.createdAt,
                 updatedAt = entity.updatedAt,
             )

@@ -1,5 +1,6 @@
 package com.crazywedding.weddingbudgetplanner.authentication.entity
 
+import com.crazywedding.weddingbudgetplanner.authentication.entity.enum.AccountTypeEnum
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
@@ -11,13 +12,23 @@ class AuthorizedJwt(
     @Column(length = 500)
     @Comment("JWT Access 토큰")
     val accessToken: String,
+
     @Column(length = 500)
     @Comment("Refresh 토큰 Hash")
     val encRefreshToken: String,
+
     @Column
     @Comment("Refresh 토큰 만료 시간")
     val expiredAt: LocalDateTime,
+
     @Column
     @Comment("토큰 발급 시간")
     val issuedAt: LocalDateTime,
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    val accountType: AccountTypeEnum,
+
+    @Column
+    val accountId: Long
 )
