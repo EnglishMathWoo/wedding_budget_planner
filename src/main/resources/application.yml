@@ -53,11 +53,8 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
-  data:
-    redis:
-      url: "localhost"
 server:
-  port: 80
+  port: 8080
 authentication:
   issuer: local-wedding-budget-planner-api
   admin:
