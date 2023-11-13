@@ -1,5 +1,11 @@
 package com.crazywedding.weddingbudgetplanner
 
-fun main() {
-    println("Hello Wedding Budget Planner!")
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+
+@SpringBootApplication
+class WeddingBudgetPlannerApplication
+
+fun main(args: Array<String>) {
+    runApplication<WeddingBudgetPlannerApplication>(*args)
 }
