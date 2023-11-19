@@ -7,18 +7,11 @@ data class Jwt(
 ) {
 
     companion object {
-
-        /**
-         * (Server) DB 에 저장된 토큰 변환
-         */
         fun from(authorizedJwt: AuthorizedJwt): Jwt {
             return Jwt(
                 accessToken = authorizedJwt.accessToken,
                 refreshToken = authorizedJwt.encRefreshToken
             )
         }
-    }
-    fun encryptRefreshToken(encToken: String) {
-        this.refreshToken = encToken
     }
 }

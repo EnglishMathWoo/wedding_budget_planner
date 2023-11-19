@@ -10,19 +10,19 @@ import java.time.LocalDateTime
 class AuthorizedJwt(
     @Id
     @Column(length = 500)
-    @Comment("JWT Access 토큰")
+    @Comment("Access Token")
     val accessToken: String,
 
     @Column(length = 500)
-    @Comment("Refresh 토큰 Hash")
+    @Comment("암호화된 Refresh Token")
     val encRefreshToken: String,
 
     @Column
-    @Comment("Refresh 토큰 만료 시간")
+    @Comment("Refresh Token 만료 시간")
     val expiredAt: LocalDateTime,
 
     @Column
-    @Comment("토큰 발급 시간")
+    @Comment("Token 발급 시간")
     val issuedAt: LocalDateTime,
 
     @Column

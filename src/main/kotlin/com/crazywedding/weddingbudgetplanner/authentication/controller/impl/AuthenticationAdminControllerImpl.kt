@@ -28,6 +28,7 @@ class AuthenticationAdminControllerImpl(
     ): TokenWrapperDto {
         val admin = adminAccountService.signIn(dto)
         val token = adminTokenService.create(Account.of(admin))
+
         return TokenWrapperDto.from(token)
     }
 
@@ -37,21 +38,22 @@ class AuthenticationAdminControllerImpl(
         dto: AdminSignUpDto
     ): AdminWrapperDto {
         val admin = adminAccountService.signUp(dto)
+
         return AdminWrapperDto.from(admin)
     }
 
     @PostMapping("/auth/token/refresh")
     override fun refreshToken(
-        @RequestBody @Valid tokenAuthorizeDto: TokenAuthorizeDto
+        @Valid @RequestBody
+        tokenAuthorizeDto: TokenAuthorizeDto
     ): TokenWrapperDto {
-        return TokenWrapperDto.from(
-            adminTokenService.refresh(tokenAuthorizeDto)
-        )
+        return TokenWrapperDto.from(adminTokenService.refresh(tokenAuthorizeDto))
     }
 
     @PostMapping("/auth/sign-out")
     override fun signOut(
-        @RequestBody @Valid tokenAuthorizeDto: TokenAuthorizeDto
+        @Valid @RequestBody
+        tokenAuthorizeDto: TokenAuthorizeDto
     ) {
         adminTokenService.releaseToken(tokenAuthorizeDto)
     }

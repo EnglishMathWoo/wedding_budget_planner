@@ -10,7 +10,6 @@ import java.security.Principal
 
 class Account(
     val id: Long,
-    @JvmField
     val name: String,
     val authorId: Long,
     val authorities: List<GrantedAuthority>
@@ -30,7 +29,7 @@ class Account(
                 authorities = AuthorityUtils.NO_AUTHORITIES
             )
         }
-        // for controller
+
         fun of(user: UserDto): Account {
             return Account(
                 id = user.id,
@@ -42,13 +41,12 @@ class Account(
         fun of(admin: AdminDto): Account {
             return Account(
                 id = admin.id,
-                name = admin.email!!,
+                name = admin.username,
                 authorId = admin.authorId,
                 authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Authority.ROLE_ADMIN)
             )
         }
 
-        // for service
         fun of(user: User): Account {
             return Account(
                 id = user.id!!,
@@ -57,10 +55,11 @@ class Account(
                 authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Authority.ROLE_USER)
             )
         }
+
         fun of(admin: Admin): Account {
             return Account(
                 id = admin.id!!,
-                name = admin.email!!,
+                name = admin.username,
                 authorId = admin.author?.id!!,
                 authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Authority.ROLE_ADMIN)
             )

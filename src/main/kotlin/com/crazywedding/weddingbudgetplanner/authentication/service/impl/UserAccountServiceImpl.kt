@@ -29,6 +29,7 @@ class UserAccountServiceImpl(
         if (!passwordEncoder.matches(dto.password, user.encryptedPassword)) {
             throw IncorrectPasswordException("비밀번호가 일치하지 않습니다.")
         }
+
         return UserDto.from(user)
     }
 
@@ -38,11 +39,10 @@ class UserAccountServiceImpl(
             throw DuplicatedResourceException("중복된 유저가 존재합니다.")
         }
         val encPassword = encryptPassword(dto.password)
-        val newUser = dto.toEntity(encPassword)
-
-        userRepository.save(newUser)
+        val newUser = userRepository.save(dto.toEntity(encPassword))
         val newAuthor = authorRepository.save(Author.ofUser(newUser))
         newUser.author = newAuthor
+
         return UserDto.from(newUser)
     }
 
@@ -53,6 +53,7 @@ class UserAccountServiceImpl(
             throw IncorrectPasswordException("비밀번호가 일치하지 않습니다.")
         }
         user.encryptedPassword = encryptPassword(dto.newPassword)
+
         return UserDto.from(user)
     }
 

@@ -32,7 +32,7 @@ class JwtProvider(
     override fun create(principal: Account, issuedAt: LocalDateTime): Jwt {
         return Jwt(
             accessToken = createNewToken(principal, issuedAt),
-            refreshToken = UUID.randomUUID().toString() //
+            refreshToken = UUID.randomUUID().toString()
         )
     }
 
@@ -47,12 +47,8 @@ class JwtProvider(
         tokenParser.parseClaimsJws(token)
     }
 
-    /**
-     * 토큰 => Account
-     * @exception InvalidAuthorityException 존재 하지 않는 Account 호출시
-     */
     private fun tokenToAccount(token: String): Account {
-        val claims = this.tokenToClaims(token)
+        val claims = tokenToClaims(token)
         return claimsToAccount(claims)
     }
 
@@ -69,17 +65,13 @@ class JwtProvider(
         )
     }
 
-    /**
-     * 토큰을 claims 로 변경 (Token Provider 구현체에서 Account 정보를 조회하기 위해 사용함)
-     * @exception InvalidAuthorityException 유효하지 않으면
-     */
     private fun tokenToClaims(token: String): Claims {
         return tokenParser.parseClaimsJws(token).body
     }
 
     private fun expiredAt(issuedAt: LocalDateTime, expSec: Long): LocalDateTime {
         return LocalDateTime
-            .from(issuedAt) // copy
+            .from(issuedAt)
             .plusSeconds(expSec)
     }
 

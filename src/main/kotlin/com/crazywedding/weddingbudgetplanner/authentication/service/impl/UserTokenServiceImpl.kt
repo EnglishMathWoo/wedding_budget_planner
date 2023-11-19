@@ -4,8 +4,8 @@ import com.crazywedding.weddingbudgetplanner.authentication.dto.request.TokenAut
 import com.crazywedding.weddingbudgetplanner.authentication.dto.response.TokenDto
 import com.crazywedding.weddingbudgetplanner.authentication.entity.AuthorizedJwt
 import com.crazywedding.weddingbudgetplanner.authentication.entity.enum.AccountTypeEnum
-import com.crazywedding.weddingbudgetplanner.authentication.repository.AdminRepository
 import com.crazywedding.weddingbudgetplanner.authentication.repository.AuthorizedJwtRepository
+import com.crazywedding.weddingbudgetplanner.authentication.repository.UserRepository
 import com.crazywedding.weddingbudgetplanner.authentication.service.TokenService
 import com.crazywedding.weddingbudgetplanner.common.error.exception.InvalidAuthorityException
 import com.crazywedding.weddingbudgetplanner.common.error.exception.InvalidTokenException
@@ -18,20 +18,21 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
-@Service("adminTokenService")
-class AdminTokenService(
-    val adminJwtProvider: JwtProvider,
+@Service("userTokenService")
+class UserTokenServiceImpl(
+    val userJwtProvider: JwtProvider,
     val symmetricCrypto: SymmetricCrypto,
     val authorizedJwtRepository: AuthorizedJwtRepository,
-    val adminRepository: AdminRepository,
-    @Value("\${authentication.admin.refresh-token.expired-seconds}")
-    val refreshTokenExpSec: Long
+    val userRepository: UserRepository,
+    @Value("\${authentication.user.refresh-token.expired-seconds}")
+    val refreshTokenExpSec: Long,
+    @Value("\${authentication.user.access-token.expired-seconds}")
+    val accessTokenExpSec: Long
 ) : TokenService {
-
     @Transactional
     override fun create(account: Account): TokenDto {
         val issuedAt = LocalDateTime.now()
-        val jwt = adminJwtProvider.create(account, issuedAt)
+        val jwt = userJwtProvider.create(account, issuedAt)
 
         authorizedJwtRepository.save(
             AuthorizedJwt(
@@ -40,47 +41,45 @@ class AdminTokenService(
                 expiredAt = LocalDateTime.from(issuedAt).plusSeconds(refreshTokenExpSec),
                 issuedAt = issuedAt,
                 accountId = account.id,
-                accountType = AccountTypeEnum.ADMIN
+                accountType = AccountTypeEnum.USER
             )
         )
         return TokenDto.from(jwt)
     }
 
-    override fun create(account: Account, expSec: Long): TokenDto {
-        TODO("Admin API 는 구현하지 않았습니다.")
-    }
-
     @Transactional(noRollbackFor = [InvalidTokenException::class])
     override fun refresh(authorizeDto: TokenAuthorizeDto): TokenDto {
-        val accountId = this.releaseToken(authorizeDto)
+        val accountId = releaseToken(authorizeDto)
+        val user = userRepository.findById(accountId)
+            .orElseThrow { InvalidAuthorityException("이용이 불가한 유저 계정입니다.") }
 
-        val admin = adminRepository.findById(accountId).orElseThrow {
-            // 인증(토큰 생성) 시점에는 유저가 존재하였으나 리프레시 시점에는 유저가 존재하지 않는 경우
-            throw InvalidAuthorityException("이용이 불가한 어드민 계정입니다.")
-        }
-        return this.create(Account.of(admin))
+        return create(Account.of(user))
     }
 
     @Transactional
     override fun releaseToken(authorizeDto: TokenAuthorizeDto): Long {
         val authorizedJwt = authorizedJwtRepository.findById(authorizeDto.accessToken).orElseThrow {
-            throw InvalidAuthorityException("Invalid Token")
+            throw InvalidAuthorityException("유효하지 않은 token 입니다.")
         }
-        this.validateRefreshToken(authorizeDto.refreshToken, authorizedJwt)
-        this.validateAccessToken(authorizeDto.accessToken)
+        validateRefreshToken(authorizeDto.refreshToken, authorizedJwt)
+        validateAccessToken(authorizeDto.accessToken)
         authorizedJwtRepository.delete(authorizedJwt)
+
         return authorizedJwt.accountId
     }
 
     private fun validateRefreshToken(rawToken: String, authorizedJwt: AuthorizedJwt) {
         if (symmetricCrypto.decrypt(authorizedJwt.encRefreshToken) != rawToken) {
-            throw InvalidAuthorityException("Invalid Refresh Token")
+            throw InvalidAuthorityException("유효하지 않은 refresh token 입니다.")
+        }
+        if (authorizedJwt.expiredAt.isBefore(LocalDateTime.now())) {
+            throw InvalidTokenException("이미 만료된 refresh token 입니다.")
         }
     }
 
     private fun validateAccessToken(accessToken: String) {
         try {
-            adminJwtProvider.validate(accessToken)
+            userJwtProvider.validate(accessToken)
         } catch (e: ExpiredJwtException) {
             // do nothing (ignore ExpiredJwtException)
         }

@@ -16,7 +16,6 @@ class Author(
     @Enumerated(EnumType.STRING)
     val authorType: AuthorTypeEnum,
 
-    // FIXME: admin, user 필드만 지정하고 타입을 지정하지 않아도 될 것 같으나 추후에 논의하면 좋을듯.
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", foreignKey = ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     @Comment("어드민 정보")
@@ -28,7 +27,6 @@ class Author(
     val user: User? = null,
 
 ) {
-
     companion object {
         fun ofAdmin(admin: Admin) = Author(
             authorType = AuthorTypeEnum.ADMIN,

@@ -47,7 +47,7 @@ spring:
     hikari:
       minimum-idle: 10
       maximum-pool-size: 50
-      transaction-isolation: TRANSACTION_READ_COMMITTED
+      transaction-isolation: TRANSACTION_REPEATABLE_READ
       pool-name: pool-local-wedding-budget-planner-api
   jpa:
     generate-ddl: true

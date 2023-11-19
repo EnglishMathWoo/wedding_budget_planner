@@ -23,6 +23,7 @@ class AuthenticationUserControllerImpl(
     ): TokenWrapperDto {
         val user = userAccountService.signIn(dto)
         val token = userTokenService.create(Account.of(user))
+
         return TokenWrapperDto.from(token)
     }
 
@@ -32,21 +33,22 @@ class AuthenticationUserControllerImpl(
         dto: UserSignUpDto
     ): UserWrapperDto {
         val user = userAccountService.signUp(dto)
+
         return UserWrapperDto.from(user)
     }
 
     @PostMapping("/auth/token/refresh")
     override fun refreshToken(
-        @RequestBody @Valid tokenAuthorizeDto: TokenAuthorizeDto
+        @Valid @RequestBody
+        tokenAuthorizeDto: TokenAuthorizeDto
     ): TokenWrapperDto {
-        return TokenWrapperDto.from(
-            userTokenService.refresh(tokenAuthorizeDto)
-        )
+        return TokenWrapperDto.from(userTokenService.refresh(tokenAuthorizeDto))
     }
 
     @PostMapping("/auth/sign-out")
     override fun signOut(
-        @RequestBody @Valid tokenAuthorizeDto: TokenAuthorizeDto
+        @Valid @RequestBody
+        tokenAuthorizeDto: TokenAuthorizeDto
     ) {
         userTokenService.releaseToken(tokenAuthorizeDto)
     }

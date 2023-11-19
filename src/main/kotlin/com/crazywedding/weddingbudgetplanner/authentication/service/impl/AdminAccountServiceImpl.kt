@@ -31,6 +31,7 @@ class AdminAccountServiceImpl(
         if (!passwordEncoder.matches(dto.password, admin.encryptedPassword)) {
             throw IncorrectPasswordException("비밀번호가 일치하지 않습니다.")
         }
+
         return AdminDto.from(admin)!!
     }
 
@@ -40,11 +41,10 @@ class AdminAccountServiceImpl(
             throw DuplicatedResourceException("중복된 유저가 존재합니다.")
         }
         val encPassword = encryptPassword(dto.password)
-        val newAdmin = dto.toEntity(encPassword)
-
-        adminRepository.save(newAdmin)
+        val newAdmin = adminRepository.save(dto.toEntity(encPassword))
         val newAuthor = authorRepository.save(Author.ofAdmin(newAdmin))
         newAdmin.author = newAuthor
+
         return AdminDto.from(newAdmin)!!
     }
 
@@ -55,6 +55,7 @@ class AdminAccountServiceImpl(
             throw IncorrectPasswordException("비밀번호가 일치하지 않습니다.")
         }
         admin.encryptedPassword = encryptPassword(dto.newPassword)
+
         return AdminDto.from(admin)!!
     }
 
