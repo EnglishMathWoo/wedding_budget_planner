@@ -13,15 +13,15 @@ import java.time.LocalDateTime
 abstract class BaseEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    val id: Long? = null,
 
     @Column
     @CreatedBy
-    var createdBy: Long? = null,
+    val createdBy: Long? = null,
 
     @Column
     @CreatedDate
-    var createdAt: LocalDateTime = LocalDateTime.MIN,
+    val createdAt: LocalDateTime = LocalDateTime.MIN,
 
     @Column
     @LastModifiedBy

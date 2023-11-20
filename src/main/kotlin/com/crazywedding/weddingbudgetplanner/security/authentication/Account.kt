@@ -10,6 +10,7 @@ import java.security.Principal
 
 class Account(
     val id: Long,
+    @JvmField
     val name: String,
     val authorId: Long,
     val authorities: List<GrantedAuthority>

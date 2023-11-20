@@ -1,7 +1,6 @@
 package com.crazywedding.weddingbudgetplanner.authentication.controller
 
 import com.crazywedding.weddingbudgetplanner.authentication.dto.request.*
-import com.crazywedding.weddingbudgetplanner.authentication.dto.response.wrapper.AdminWrapperDto
 import com.crazywedding.weddingbudgetplanner.authentication.dto.response.wrapper.TokenWrapperDto
 import com.crazywedding.weddingbudgetplanner.authentication.dto.response.wrapper.UserWrapperDto
 import io.swagger.v3.oas.annotations.Operation

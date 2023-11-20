@@ -1,6 +1,6 @@
 Configuration:
   name: Default
-  status: INFO
+  status: DEBUG
 
   Properties:
     Property:
@@ -29,14 +29,14 @@ Configuration:
           max: 30
   Loggers:
     Root:
-      level: INFO
+      level: DEBUG
       AppenderRef:
         - ref: Console_Appender
         - ref: RollingFile_Appender
     Logger:
       - name: com.crazywedding.weddingbudgetplanner
         additivity: false
-        level: INFO
+        level: DEBUG
         AppenderRef:
           - ref: Console_Appender
           - ref: RollingFile_Appender

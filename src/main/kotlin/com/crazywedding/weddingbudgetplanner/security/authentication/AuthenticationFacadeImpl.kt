@@ -15,11 +15,10 @@ class AuthenticationFacadeImpl : AuthenticationFacade {
         val authentication = getAuthentication()
         val principal = authentication.principal
 
-        // 정상적인 인증객체를 들고있는 경우 (USER, ADMIN, ANONYMOUS)
         if (principal is Account) {
             return principal
         }
 
-        throw IllegalStateException("")
+        throw IllegalStateException("정상적으로 인증되지 않았습니다.")
     }
 }

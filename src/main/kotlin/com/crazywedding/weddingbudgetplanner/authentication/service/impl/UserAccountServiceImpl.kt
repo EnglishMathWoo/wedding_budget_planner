@@ -49,16 +49,12 @@ class UserAccountServiceImpl(
     @Transactional
     override fun changePassword(id: Long, dto: UserChangePasswordDto): UserDto {
         val user = getUserAndThrowExIfNotExisted(id)
-        if (!matchPassword(dto.currentPassword, user.encryptedPassword)) {
+        if (!passwordEncoder.matches(dto.currentPassword, user.encryptedPassword)) {
             throw IncorrectPasswordException("비밀번호가 일치하지 않습니다.")
         }
         user.encryptedPassword = encryptPassword(dto.newPassword)
 
         return UserDto.from(user)
-    }
-
-    private fun matchPassword(rawPassword: String, encPassword: String): Boolean {
-        return passwordEncoder.matches(rawPassword, encPassword)
     }
 
     private fun encryptPassword(rawPassword: String): String {

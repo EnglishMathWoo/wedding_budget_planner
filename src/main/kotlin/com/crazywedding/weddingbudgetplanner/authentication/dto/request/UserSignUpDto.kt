@@ -1,6 +1,5 @@
 package com.crazywedding.weddingbudgetplanner.authentication.dto.request
 
-import com.crazywedding.weddingbudgetplanner.authentication.entity.Admin
 import com.crazywedding.weddingbudgetplanner.authentication.entity.User
 import com.crazywedding.weddingbudgetplanner.common.validator.PhoneFormat
 import io.swagger.v3.oas.annotations.media.Schema
