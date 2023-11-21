@@ -60,14 +60,14 @@ authentication:
   admin:
     access-token:
       secret-key: WEDDING_BUDGET_PLANNER_ADMIN_ACCESS_KEY@#$
-      expired-seconds: 10
+      expired-seconds: 7200
     refresh-token:
       secret-key: WEDDING_BUDGET_PLANNER_ADMIN_REFRESH_KEY!@#
       expired-seconds: 14400
   user:
     access-token:
       secret-key: WEDDING_BUDGET_PLANNER_USER_ACCESS_KEY@#$
-      expired-seconds: 10
+      expired-seconds: 7200
     refresh-token:
       secret-key: WEDDING_BUDGET_PLANNER_USER_REFRESH_KEY!@#
       expired-seconds: 14400

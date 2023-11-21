@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 interface UserController {
 
     @Operation(summary = "비밀번호 변경", description = "비밀번호를 변경한다.")
-    fun changeAdminPassword(
+    fun changeUserPassword(
         dto: UserChangePasswordDto
     ): UserWrapperDto
 }

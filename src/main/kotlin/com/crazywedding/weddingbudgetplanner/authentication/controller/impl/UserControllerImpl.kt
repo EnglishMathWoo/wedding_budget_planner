@@ -16,7 +16,7 @@ class UserControllerImpl(
 ) : UserController {
 
     @PutMapping("/passwords")
-    override fun changeAdminPassword(
+    override fun changeUserPassword(
         @Valid @RequestBody
         dto: UserChangePasswordDto
     ): UserWrapperDto {
