@@ -11,12 +11,12 @@ import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/user-api")
+@RequestMapping("/user-api/auth")
 class AuthenticationUserControllerImpl(
     private val userAccountService: UserAccountService,
     private val userTokenService: TokenService,
 ) : AuthenticationUserController {
-    @PostMapping("/auth/sign-in")
+    @PostMapping("/sign-in")
     override fun signIn(
         @RequestBody
         dto: UserSignInDto
@@ -27,7 +27,7 @@ class AuthenticationUserControllerImpl(
         return TokenWrapperDto.from(token)
     }
 
-    @PostMapping("/auth/sign-up")
+    @PostMapping("/sign-up")
     override fun signUp(
         @Valid @RequestBody
         dto: UserSignUpDto
@@ -37,7 +37,7 @@ class AuthenticationUserControllerImpl(
         return UserWrapperDto.from(user)
     }
 
-    @PostMapping("/auth/token/refresh")
+    @PostMapping("/token/refresh")
     override fun refreshToken(
         @Valid @RequestBody
         tokenAuthorizeDto: TokenAuthorizeDto
@@ -45,7 +45,7 @@ class AuthenticationUserControllerImpl(
         return TokenWrapperDto.from(userTokenService.refresh(tokenAuthorizeDto))
     }
 
-    @PostMapping("/auth/sign-out")
+    @PostMapping("/sign-out")
     override fun signOut(
         @Valid @RequestBody
         tokenAuthorizeDto: TokenAuthorizeDto
