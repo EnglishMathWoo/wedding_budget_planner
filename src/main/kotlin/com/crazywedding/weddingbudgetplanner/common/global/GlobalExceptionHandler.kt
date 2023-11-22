@@ -94,7 +94,6 @@ class GlobalExceptionHandler {
             is ExpiredJwtException -> ExpiredTokenException("토큰이 만료 되었습니다.")
             else -> InvalidAuthorityException(e.localizedMessage)
         }
-
         return ResponseEntity(ErrorResponseBody.of(baseException), baseException.status)
     }
 

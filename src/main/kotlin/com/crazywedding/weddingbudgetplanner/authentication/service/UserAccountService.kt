@@ -8,5 +8,4 @@ import com.crazywedding.weddingbudgetplanner.authentication.dto.response.UserDto
 interface UserAccountService {
     fun signUp(dto: UserSignUpDto): UserDto
     fun signIn(dto: UserSignInDto): UserDto
-    fun changePassword(id: Long, dto: UserChangePasswordDto): UserDto
 }

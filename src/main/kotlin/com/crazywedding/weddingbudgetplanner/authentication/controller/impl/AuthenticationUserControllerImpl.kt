@@ -23,7 +23,6 @@ class AuthenticationUserControllerImpl(
     ): TokenWrapperDto {
         val user = userAccountService.signIn(dto)
         val token = userTokenService.create(Account.of(user))
-
         return TokenWrapperDto.from(token)
     }
 
@@ -33,7 +32,6 @@ class AuthenticationUserControllerImpl(
         dto: UserSignUpDto
     ): UserWrapperDto {
         val user = userAccountService.signUp(dto)
-
         return UserWrapperDto.from(user)
     }
 

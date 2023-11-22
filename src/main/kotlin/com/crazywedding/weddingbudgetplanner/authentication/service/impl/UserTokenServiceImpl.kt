@@ -52,7 +52,6 @@ class UserTokenServiceImpl(
         val accountId = releaseToken(authorizeDto)
         val user = userRepository.findById(accountId)
             .orElseThrow { InvalidAuthorityException("이용이 불가한 유저 계정입니다.") }
-
         return create(Account.of(user))
     }
 
@@ -64,7 +63,6 @@ class UserTokenServiceImpl(
         validateRefreshToken(authorizeDto.refreshToken, authorizedJwt)
         validateAccessToken(authorizeDto.accessToken)
         authorizedJwtRepository.delete(authorizedJwt)
-
         return authorizedJwt.accountId
     }
 

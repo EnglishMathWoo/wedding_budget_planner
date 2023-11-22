@@ -3,7 +3,6 @@ package com.crazywedding.weddingbudgetplanner.authentication.service.impl
 import com.crazywedding.weddingbudgetplanner.authentication.dto.request.*
 import com.crazywedding.weddingbudgetplanner.authentication.dto.response.UserDto
 import com.crazywedding.weddingbudgetplanner.authentication.entity.Author
-import com.crazywedding.weddingbudgetplanner.authentication.entity.User
 import com.crazywedding.weddingbudgetplanner.authentication.repository.AuthorRepository
 import com.crazywedding.weddingbudgetplanner.authentication.repository.UserRepository
 import com.crazywedding.weddingbudgetplanner.authentication.service.UserAccountService
@@ -24,12 +23,11 @@ class UserAccountServiceImpl(
     @Transactional
     override fun signIn(dto: UserSignInDto): UserDto {
         val user = userRepository.findByUsername(dto.username)
-            ?: throw NotFoundResourceException("username이 일치하는 어드민을 찾지 못했습니다.")
+            ?: throw NotFoundResourceException("username이 일치하는 유저를 찾지 못했습니다.")
 
         if (!passwordEncoder.matches(dto.password, user.encryptedPassword)) {
             throw IncorrectPasswordException("비밀번호가 일치하지 않습니다.")
         }
-
         return UserDto.from(user)
     }
 
@@ -38,31 +36,10 @@ class UserAccountServiceImpl(
         if (userRepository.existsByUsername(dto.username)) {
             throw DuplicatedResourceException("중복된 유저가 존재합니다.")
         }
-        val encPassword = encryptPassword(dto.password)
+        val encPassword = passwordEncoder.encode(dto.password)
         val newUser = userRepository.save(dto.toEntity(encPassword))
         val newAuthor = authorRepository.save(Author.ofUser(newUser))
         newUser.author = newAuthor
-
         return UserDto.from(newUser)
-    }
-
-    @Transactional
-    override fun changePassword(id: Long, dto: UserChangePasswordDto): UserDto {
-        val user = getUserAndThrowExIfNotExisted(id)
-        if (!passwordEncoder.matches(dto.currentPassword, user.encryptedPassword)) {
-            throw IncorrectPasswordException("비밀번호가 일치하지 않습니다.")
-        }
-        user.encryptedPassword = encryptPassword(dto.newPassword)
-
-        return UserDto.from(user)
-    }
-
-    private fun encryptPassword(rawPassword: String): String {
-        return passwordEncoder.encode(rawPassword)
-    }
-
-    private fun getUserAndThrowExIfNotExisted(id: Long): User {
-        return userRepository.findById(id)
-            .orElseThrow { NotFoundResourceException("일치하는 유저를 찾을 수 없습니다.") }
     }
 }

@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED
 import jakarta.validation.constraints.Email
 
-@Schema(description = "[어드민] 회원가입 Request DTO")
+@Schema(description = "[유저] 회원가입 Request DTO")
 data class UserSignUpDto(
     @Schema(requiredMode = REQUIRED, description = "로그인 아이디")
     val username: String,
