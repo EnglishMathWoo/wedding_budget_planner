@@ -24,6 +24,7 @@ class UserServiceImpl(
         return UserDto.from(user)
     }
 
+    @Transactional
     override fun modify(id: Long, dto: UserModifyDto): UserDto {
         val user = getUserAndThrowExIfNotExisted(id)
         dto.modifyEntity(user)

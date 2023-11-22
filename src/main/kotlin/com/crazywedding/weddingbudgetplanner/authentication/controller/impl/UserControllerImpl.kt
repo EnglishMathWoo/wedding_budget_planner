@@ -25,7 +25,10 @@ class UserControllerImpl(
     }
 
     @PatchMapping("/me")
-    override fun modifyUser(dto: UserModifyDto): UserWrapperDto {
+    override fun modifyUser(
+        @Valid @RequestBody
+        dto: UserModifyDto
+    ): UserWrapperDto {
         val userId = authenticationFacade.getPrincipal().id
         val user = userService.modify(userId, dto)
         return UserWrapperDto.from(user)

@@ -29,5 +29,5 @@ abstract class BaseEntity(
 
     @Column
     @LastModifiedDate
-    var updatedAt: LocalDateTime = LocalDateTime.now(),
+    var updatedAt: LocalDateTime = LocalDateTime.now()
 )
