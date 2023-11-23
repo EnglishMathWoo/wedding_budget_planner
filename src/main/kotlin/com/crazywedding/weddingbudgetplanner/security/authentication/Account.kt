@@ -39,6 +39,7 @@ class Account(
                 authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Authority.ROLE_USER)
             )
         }
+
         fun of(admin: AdminDto): Account {
             return Account(
                 id = admin.id,
