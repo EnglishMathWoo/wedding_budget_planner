@@ -17,12 +17,9 @@ class CommonLoggingInterceptor(
     private val logger = KotlinLogging.logger {}
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        // 1) Log4j2 Pattern 에 들어갈 unique value (요청 식별자)
-        logger.debug("reqUid: {}", UUID.randomUUID().toString())
-        // 2) Default Request Logging
+        logger.debug("RequestID: {}", UUID.randomUUID().toString())
         logger.debug("[START] {} {}", request.method, request.requestURI)
         logger.debug("QueryParams: {}", request.queryString)
-        // 3) Authentication Logging
         logger.info(request.toString())
         val principal = authenticationFacade.getPrincipal()
         logger.debug(

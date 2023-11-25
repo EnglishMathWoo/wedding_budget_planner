@@ -21,17 +21,6 @@ class UserAccountServiceImpl(
 ) : UserAccountService {
 
     @Transactional
-    override fun signIn(dto: UserSignInDto): UserDto {
-        val user = userRepository.findByUsername(dto.username)
-            ?: throw NotFoundResourceException("username이 일치하는 유저를 찾지 못했습니다.")
-
-        if (!passwordEncoder.matches(dto.password, user.encryptedPassword)) {
-            throw IncorrectPasswordException("비밀번호가 일치하지 않습니다.")
-        }
-        return UserDto.from(user)
-    }
-
-    @Transactional
     override fun signUp(dto: UserSignUpDto): UserDto {
         if (userRepository.existsByUsername(dto.username)) {
             throw DuplicatedResourceException("중복된 유저가 존재합니다.")
@@ -41,5 +30,16 @@ class UserAccountServiceImpl(
         val newAuthor = authorRepository.save(Author.ofUser(newUser))
         newUser.author = newAuthor
         return UserDto.from(newUser)
+    }
+
+    @Transactional
+    override fun signIn(dto: UserSignInDto): UserDto {
+        val user = userRepository.findByUsername(dto.username)
+            ?: throw NotFoundResourceException("username이 일치하는 유저를 찾지 못했습니다.")
+
+        if (!passwordEncoder.matches(dto.password, user.encryptedPassword)) {
+            throw IncorrectPasswordException("비밀번호가 일치하지 않습니다.")
+        }
+        return UserDto.from(user)
     }
 }

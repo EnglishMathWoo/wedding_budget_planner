@@ -7,6 +7,6 @@ import com.crazywedding.weddingbudgetplanner.security.authentication.Account
 interface TokenService {
 
     fun create(account: Account): TokenDto
-    fun refresh(authorizeDto: TokenAuthorizeDto): TokenDto
+    fun refreshToken(authorizeDto: TokenAuthorizeDto): TokenDto
     fun releaseToken(authorizeDto: TokenAuthorizeDto): Long
 }

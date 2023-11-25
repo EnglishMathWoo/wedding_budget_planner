@@ -40,7 +40,7 @@ class AuthenticationUserControllerImpl(
         @Valid @RequestBody
         tokenAuthorizeDto: TokenAuthorizeDto
     ): TokenWrapperDto {
-        return TokenWrapperDto.from(userTokenService.refresh(tokenAuthorizeDto))
+        return TokenWrapperDto.from(userTokenService.refreshToken(tokenAuthorizeDto))
     }
 
     @PostMapping("/sign-out")
