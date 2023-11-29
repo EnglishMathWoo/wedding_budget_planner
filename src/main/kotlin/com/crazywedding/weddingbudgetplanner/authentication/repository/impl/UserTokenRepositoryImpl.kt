@@ -14,14 +14,17 @@ class UserTokenRepositoryImpl(
     @Value("\${authentication.user.refresh-token.expired-seconds}")
     private lateinit var tokenExpiredSeconds: String
 
-     override fun save(userToken: UserToken) {
+    override fun save(userToken: UserToken) {
         val key = innerRedisKey(userToken.refreshToken)
         val opsHash = redisTemplate.opsForHash<String, Any>()
         val map = innerUserTokenToMap(userToken)
+        val tokenExistence = opsHash.entries(key).isNotEmpty()
 
         opsHash.putAll(key, map)
-        if (opsHash.entries(key).isEmpty()) redisTemplate.expire(key, tokenExpiredSeconds.toLong(), TimeUnit.SECONDS)
-    }
+        if (!tokenExistence) {
+            redisTemplate.expire(key, tokenExpiredSeconds.toLong(), TimeUnit.SECONDS)
+        }
+     }
 
     override fun findByRefreshToken(refreshToken: String): UserToken? {
         val key = innerRedisKey(refreshToken)

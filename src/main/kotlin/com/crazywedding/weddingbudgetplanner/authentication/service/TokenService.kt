@@ -8,5 +8,5 @@ interface TokenService {
 
     fun create(account: Account): TokenDto
     fun refreshToken(authorizeDto: TokenAuthorizeDto): TokenDto
-    fun releaseToken(authorizeDto: TokenAuthorizeDto): Long
+    fun releaseToken(authorizeDto: TokenAuthorizeDto)
 }

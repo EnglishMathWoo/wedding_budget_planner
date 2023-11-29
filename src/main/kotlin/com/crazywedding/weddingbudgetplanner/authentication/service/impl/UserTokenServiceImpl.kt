@@ -23,8 +23,7 @@ class UserTokenServiceImpl(
 
     @Transactional
     override fun create(account: Account): TokenDto {
-        val issuedAt = LocalDateTime.now()
-        val jwt = userJwtProvider.create(account, issuedAt)
+        val jwt = userJwtProvider.create(account, LocalDateTime.now())
 
         userTokenRepository.save(
             UserToken(
@@ -36,27 +35,28 @@ class UserTokenServiceImpl(
         return TokenDto.from(jwt)
     }
 
-    @Transactional(noRollbackFor = [InvalidTokenException::class])
+    @Transactional
     override fun refreshToken(authorizeDto: TokenAuthorizeDto): TokenDto {
-        val accountId = releaseToken(authorizeDto)
-        val user = userRepository.findById(accountId)
+        val userToken = userTokenRepository.findByRefreshToken(authorizeDto.refreshToken)
+            ?: throw InvalidAuthorityException("유효하지 않은 token 입니다.")
+        val user = userRepository.findById(userToken.userId)
             .orElseThrow { InvalidAuthorityException("이용이 불가한 유저 계정입니다.") }
-        return create(Account.of(user))
+        val jwt = userJwtProvider.create(Account.of(user), LocalDateTime.now())
+
+        userTokenRepository.save(
+            UserToken(
+                accessToken = jwt.accessToken,
+                refreshToken = userToken.refreshToken,
+                userId = userToken.userId
+            )
+        )
+        return TokenDto.from(jwt)
     }
 
     @Transactional
-    override fun releaseToken(authorizeDto: TokenAuthorizeDto): Long {
+    override fun releaseToken(authorizeDto: TokenAuthorizeDto) {
         val userToken = userTokenRepository.findByRefreshToken(authorizeDto.refreshToken)
             ?: throw InvalidAuthorityException("유효하지 않은 token 입니다.")
-        validateToken(authorizeDto.refreshToken, userToken)
         userTokenRepository.delete(userToken)
-        return userToken.userId
-    }
-
-    private fun validateToken(rawToken: String, authorizedJwt: UserToken) {
-        if (authorizedJwt.refreshToken != rawToken) {
-            throw InvalidAuthorityException("유효하지 않은 refresh token 입니다.")
-        }
-        userJwtProvider.validate(authorizedJwt.accessToken)
     }
 }
